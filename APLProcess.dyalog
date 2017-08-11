@@ -484,6 +484,7 @@
         :If 'Windows'≡7↑⊃#.⎕WG'APLVersion'
             Proc←WinSshProc(host user keyfile cmd)
         :ElseIf 'Linux'≡5↑⊃#.⎕WG'APLVersion'
+        :OrIf 'Mac'≡3↑⊃#.⎕WG'APLVersion'
             Proc←LinSshProc(host user keyfile cmd)
         :Else
             ⎕SIGNAL⊂('EN'16)('Message' 'SSH not supported on this OS')
