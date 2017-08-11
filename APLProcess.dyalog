@@ -18,7 +18,7 @@
     eis←{2>|≡⍵:,⊂⍵ ⋄ ⍵} ⍝ enclose if simple
 
     ∇ path←SourcePath;source
-    ⍝ Determine the source path of the class
+        ⍝ Determine the source path of the class
 
         :Trap 6
             source←⍎'(⊃⊃⎕CLASS ⎕THIS).SALT_Data.SourceFile' ⍝ ⍎ works around a bug
@@ -34,13 +34,13 @@
     ∇ make1 args;rt;cmd;ws
         :Access Public Instance
         :Implements Constructor
-      ⍝ args is:
-      ⍝  [1]  the workspace to load
-      ⍝  [2]  any command line arguments
-      ⍝ {[3]} if present, a Boolean indicating whether to use the runtime version, OR a character vector of the executable name to run 
-      ⍝ {[4]} if present, the RIDE_INIT parameters to use
-      ⍝ {[5]} if present, a log-file prefix for process output
-      
+        ⍝ args is:
+        ⍝  [1]  the workspace to load
+        ⍝  [2]  any command line arguments
+        ⍝ {[3]} if present, a Boolean indicating whether to use the runtime version, OR a character vector of the executable name to run 
+        ⍝ {[4]} if present, the RIDE_INIT parameters to use
+        ⍝ {[5]} if present, a log-file prefix for process output
+
         args←{2>|≡⍵:,⊂⍵ ⋄ ⍵}args
         args←5↑args,(⍴args)↓'' '' 0 '' ''
         (ws cmd rt RIDE_INIT OUT_FILE)←args   
@@ -74,7 +74,7 @@
             Proc←Diagnostics.Process.Start psi
         :Else ⍝ Unix         
             :If ~∨/'LOG_FILE'⍷args            ⍝ By default
-                args,←'LOG_FILE=/dev/nul '   ⍝    no log file
+                args,←' LOG_FILE=/dev/nul '   ⍝    no log file
             :EndIf
 
             :If IsSsh                             
@@ -115,7 +115,7 @@
         :Access Public Shared
         r←'Win'≡3↑platform←⊃#.⎕WG'APLVersion'
     ∇
-    
+
     ∇ r←IsMacOS
         :Access Public Shared
         r←'Mac'≡3↑platform←⊃#.⎕WG'APLVersion'
@@ -159,9 +159,9 @@
     ∇
 
     ∇ r←RunTimeName exe
-    ⍝ Assumes that:
-    ⍝ Windows runtime ends in "rt.exe"
-    ⍝ *NIX runtime ends in ".rt"
+        ⍝ Assumes that:
+        ⍝ Windows runtime ends in "rt.exe"
+        ⍝ *NIX runtime ends in ".rt"
         r←exe
         :If IsWin
             :If 'rt.exe'≢¯6↑{('rt.ex',⍵)[⍵⍳⍨'RT.EX',⍵]}exe ⍝ deal with case insensitivity
@@ -175,7 +175,7 @@
 
     ∇ r←KillChildren Exe;kids;⎕USING;p;m;i;mask
         :Access Public Shared
-      ⍝ returns [;1] pid [;2] process name of any processes that were not killed
+        ⍝ returns [;1] pid [;2] process name of any processes that were not killed
         r←0 2⍴0 ''
         :If ~0∊⍴kids←ListProcesses Exe ⍝ All child processes using the exe
             :If IsWin
@@ -205,10 +205,10 @@
 
     ∇ r←{all}ListProcesses procName;me;⎕USING;procs;unames;names;name;i;pn;kid;parent;mask;n
         :Access Public Shared
-    ⍝ returns either my child processes or all processes
-    ⍝ procName is either '' for all children, or the name of a process
-    ⍝ r[;1] - child process number (Id)
-    ⍝ r[;2] - child process name
+        ⍝ returns either my child processes or all processes
+        ⍝ procName is either '' for all children, or the name of a process
+        ⍝ r[;1] - child process number (Id)
+        ⍝ r[;2] - child process name
         me←GetCurrentProcessId
         r←0 2⍴0 ''
         procName←,procName
@@ -242,8 +242,8 @@
         :ElseIf IsSsh
             ∘∘∘
         :Else ⍝ Linux
-      ⍝ unfortunately, Ubuntu (and perhaps others) report the PPID of tasks started via ⎕SH as 1
-      ⍝ so, the best we can do at this point is identify processes that we tagged with ppid=
+            ⍝ unfortunately, Ubuntu (and perhaps others) report the PPID of tasks started via ⎕SH as 1
+            ⍝ so, the best we can do at this point is identify processes that we tagged with ppid=
             mask←' '∧.=procs←' ',↑_PS'-eo pid,cmd',((~all)/' | grep APLppid=',(⍕GetCurrentProcessId)),(0<⍴procName)/' | grep ',procName,' | grep -v grep' ⍝ AWS
             mask∧←2≥+\mask
             procs←↓¨mask⊂procs
@@ -328,7 +328,7 @@
 
     ∇ r←IsRunning args;⎕USING;start;exe;pid;proc;diff;res
         :Access public shared
-      ⍝ args - pid {exe} {startTS}
+        ⍝ args - pid {exe} {startTS}
         r←0
         args←eis args
         (pid exe start)←3↑args,(⍴args)↓0 ''⍬
@@ -360,7 +360,7 @@
 
     ∇ r←Stop pid;proc
         :Access public shared
-    ⍝ attempts to stop the process with processID pid
+        ⍝ attempts to stop the process with processID pid
         :If IsWin
             ⎕USING←'System,system.dll'
             :Trap 0
@@ -380,7 +380,7 @@
     ∇
 
     ∇ r←UNIXIsRunning pid;txt
-    ⍝ Return 1 if the process is in the process table and is not a defunct
+        ⍝ Return 1 if the process is in the process table and is not a defunct
         r←0
         →(r←' '∨.≠txt←UNIXGetShortCmd pid)↓0
         r←~∨/'<defunct>'⍷txt
@@ -397,7 +397,7 @@
     ∇
 
     ∇ r←UNIXGetShortCmd pid;cmd
-      ⍝ Retrieve sort form of cmd used to start process <pid> 
+        ⍝ Retrieve sort form of cmd used to start process <pid> 
         cmd←(1+IsMac)⊃'cmd' 'command'
         cmd←'ps -o ',cmd,' -p ',(⍕pid),' 2>/dev/null ; exit 0'        
         :If IsSsh
@@ -440,7 +440,7 @@
     :EndClass
 
     ∇ r←ProcessUsingPort port;t
-    ⍝ return the process ID of the process (if any) using a port
+        ⍝ return the process ID of the process (if any) using a port
         :Access public shared
         r←⍬
         :If IsWin
@@ -463,15 +463,15 @@
             'GCN'⎕NA'I4 Kernel32|GetComputerNameEx* U4 >0T =U4'
             r←2⊃GCN 7 255 255
             :Return
-      ⍝ ComputerNameNetBIOS = 0
-      ⍝ ComputerNameDnsHostname = 1
-      ⍝ ComputerNameDnsDomain = 2
-      ⍝ ComputerNameDnsFullyQualified = 3
-      ⍝ ComputerNamePhysicalNetBIOS = 4
-      ⍝ ComputerNamePhysicalDnsHostname = 5
-      ⍝ ComputerNamePhysicalDnsDomain = 6
-      ⍝ ComputerNamePhysicalDnsFullyQualified = 7 <<<
-      ⍝ ComputerNameMax = 8
+            ⍝ ComputerNameNetBIOS = 0
+            ⍝ ComputerNameDnsHostname = 1
+            ⍝ ComputerNameDnsDomain = 2
+            ⍝ ComputerNameDnsFullyQualified = 3
+            ⍝ ComputerNamePhysicalNetBIOS = 4
+            ⍝ ComputerNamePhysicalDnsHostname = 5
+            ⍝ ComputerNamePhysicalDnsDomain = 6
+            ⍝ ComputerNamePhysicalDnsFullyQualified = 7 <<<
+            ⍝ ComputerNameMax = 8
         :ElseIf IsSsh
             ∘∘∘ ⍝ Not supported
         :ElseIf
@@ -479,7 +479,71 @@
         :EndIf
     ∇
 
-    ∇ Proc←SshProc(host user keyfile cmd);conn;z;kf;allpids;guid;listpids;pids;⎕USING;pid;tid
+    ∇ Proc←SshProc(host user keyfile cmd)
+        ⍝ Are we on Windows?
+        :If 'Windows'≡7↑⊃#.⎕WG'APLVersion'
+            Proc←WinSshProc(host user keyfile cmd)
+        :ElseIf 'Linux'≡5↑⊃#.⎕WG'APLVersion'
+            Proc←LinSshProc(host user keyfile cmd)
+        :Else
+            ⎕SIGNAL⊂('EN'16)('Message' 'SSH not supported on this OS')
+        :EndIf
+    ∇
+
+    ∇ Proc←LinSshProc(host user keyfile cmd);_;mkcmd;runcmd;listpids;tid;pid;pids
+        mkcmd←{
+            host user keyfile cmd←⍵
+            r ←'ssh '
+            r,←'''',user,'@',host,''''
+            r,←' -i ''',keyfile,''''
+
+            ⍝ to have ' in unix command:
+            ⍝ (e.g. cmd 'xyz'): 
+            ⍝ 'cmd '"'"'xyz'"'"'''
+            cmd←(''''⎕R{'''"''"'''})cmd
+            r,←' ''',cmd,''''
+            r
+        }
+
+        runcmd←{
+            ⍺←0 0
+            bg sp←¯2↑⍺
+            sp←∊(~sp)⍴⊂' 2>/dev/null >/dev/null'
+            bg←∊bg⍴⊂' &'
+            +⎕SH (mkcmd (host user keyfile ⍵)),sp,bg
+        }
+
+        ⍝ make sure the keyfile has the right permissions
+        ⎕SH'chmod 600 ''',keyfile,''''
+
+        ⍝ try sending one command; if it fails we know we can't connect
+        :Trap 11
+            {}runcmd'true'
+        :Else
+            'Cannot connect to host'⎕SIGNAL 11
+        :EndTrap
+
+        listpids←{
+            x←1 runcmd'ps -o pid,command -u ',user,' | grep dyalog | grep -v grep | awk ''{print $1}'''
+            (⊃¨2⊃¨⎕VFI¨x)~0
+        }
+
+        pids←listpids ⍬
+        Proc←⎕NS ''
+        Proc.HasExited←0
+        tid←{{}1 0 runcmd ⍵}&cmd
+        Proc.tid←tid
+        ⎕DL 1
+        :If 1≤⍴pid←(listpids ⍬)~pids 
+            pid←⊃pid
+        :Else 
+            ∘∘∘
+        :EndIf
+        Proc.Pid←pid 
+    ∇
+
+
+    ∇ Proc←WinSshProc(host user keyfile cmd);conn;z;kf;allpids;guid;listpids;pids;⎕USING;pid;tid
         ⎕USING←'Renci.SshNet,',PATH,'/Renci.SshNet.dll'
         kf←⎕NEW PrivateKeyFile (,⊂keyfile)      
         conn←⎕NEW SshClient (host 22 user (,kf)) 
@@ -490,22 +554,22 @@
         :Else ⋄ 'Unexpected error creating ssh client instance' ⎕SIGNAL 11
         :EndTrap 
 
-        listpids←{0~⍨2⊃(⎕UCS 10)⎕VFI (conn.RunCommand ⊂'ps -u ',user,' | grep dyalog | grep -v grep | awk ''{print $2}''').Result}
+        listpids←{0~⍨2⊃(⎕UCS 10)⎕VFI (conn.RunCommand ⊂'ps -o pid,command -u ',user,' | grep dyalog | grep -v grep | awk ''{print $1}''').Result}
         guid←'dyalog-ssh-',(⍕⎕TS)~' '
         pids←listpids ⍬
         Proc←⎕NS ''
         Proc.SshConn←conn
         Proc.HasExited←0
-        tid←{SshRun conn ⍵ Proc}&⊂cmd 
+        tid←{WinSshRun conn ⍵ Proc}&⊂cmd 
         Proc.tid←tid
         ⎕DL 1
-        :If 1=⍴pid←(listpids ⍬)~pids ⋄ pid←⊃pid
+        :If 1≤⍴pid←(listpids ⍬)~pids ⋄ pid←⊃pid
         :Else ⋄ ∘∘∘ ⋄ :EndIf ⍝ failed to start  
         Proc.Pid←pid
     ∇  
 
-    ∇SshRun (conn cmd proc) 
-    ⍝ Wait until APL exits, then set HasExited←1
+    ∇WinSshRun (conn cmd proc) 
+        ⍝ Wait until APL exits, then set HasExited←1
         conn.RunCommand cmd
         proc.HasExited←1
     ∇
